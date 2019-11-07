@@ -25,7 +25,7 @@ public class CustomArrayAdapter extends ArrayAdapter<cards> {
         {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item,parent,false);
         }
-        TextView name = (TextView) convertView.findViewById(R.id.name);
+        TextView name = (TextView) convertView.findViewById(R.id.name_display);
         ImageView image = (ImageView) convertView.findViewById(R.id.image);
         name.setText(card_item.getName());
         image.setImageResource(R.mipmap.ic_launcher);
