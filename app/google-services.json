@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "254038957619",
+    "firebase_url": "https://highschooltinder.firebaseio.com",
+    "project_id": "highschooltinder",
+    "storage_bucket": "highschooltinder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254038957619:android:40061fe3d27ca28dc40d46",
+        "android_client_info": {
+          "package_name": "com.example.highschool_tinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254038957619-vevfibkim33rrrdg2vu8uh7d00auk4vo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ4NRdGUbjR3kGQaMuCy2a4SqG8RYS_Uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254038957619-vevfibkim33rrrdg2vu8uh7d00auk4vo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
