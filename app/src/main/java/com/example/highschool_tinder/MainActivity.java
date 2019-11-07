@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,26 +24,30 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
+    private cards cards_data[];
+    private CustomArrayAdapter arrayAdapter;
     private int i;
     private FirebaseAuth mAuth;
     private Button mLogin, mRegister, mLogout;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
 
+    ListView listView;
+    List<cards> rowItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLogout = findViewById(R.id.logout_but);
-        checkUserSex();
-        al = new ArrayList<>();
-        mAuth = FirebaseAuth.getInstance();
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
 
+        checkUserSex();
+        rowItems = new ArrayList<cards>();
+        arrayAdapter = new CustomArrayAdapter(this, R.layout.item, rowItems);
+
+        mAuth = FirebaseAuth.getInstance();
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
         flingContainer.setAdapter(arrayAdapter);
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                al.remove(0);
+                rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -71,10 +76,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
                 // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-                Log.d("LIST", "notified");
-                i++;
+
             }
 
             @Override
@@ -161,10 +163,11 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference oppositeSexDb = FirebaseDatabase.getInstance().getReference().child("Users").child(FriendSex);
         oppositeSexDb.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onChildAdded( DataSnapshot dataSnapshot,  String s) {
                 if (dataSnapshot.exists())
                 {
-                    al.add(dataSnapshot.child("name").getValue().toString());
+                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("name").getValue().toString());
+                    rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
                 }
             }
