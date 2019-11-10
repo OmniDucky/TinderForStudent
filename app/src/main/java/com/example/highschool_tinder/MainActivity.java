@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    String Something;
     private cards cards_data[];
     private CustomArrayAdapter arrayAdapter;
     private int i;
