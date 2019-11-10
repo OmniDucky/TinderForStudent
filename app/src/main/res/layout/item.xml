@@ -19,23 +19,24 @@
         app:cardCornerRadius="4dp"
         android:elevation="2dp"
         android:id="@+id/cardView">
-        <FrameLayout
+        <LinearLayout android:orientation="vertical"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="300dp"
+            android:layout_height="350dp">
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/image"/>
+                android:layout_height="300dp"
+                android:id="@+id/image"
+                android:scaleType="centerCrop"/>
             <TextView
                 android:id="@+id/name_display"
                 android:textSize="40sp"
                 android:textColor="@android:color/black"
-                android:gravity="center"
+                android:gravity="center|left"
                 tools:text="Dat did this"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </FrameLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 </FrameLayout>

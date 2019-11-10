@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-
             }
 
             @Override
@@ -198,7 +196,11 @@ public class MainActivity extends AppCompatActivity {
             public void onChildAdded( DataSnapshot dataSnapshot,  String s) {
                 if (dataSnapshot.exists() && !dataSnapshot.child("connection").child("nope").hasChild(currentId) && !dataSnapshot.child("connection").child("yeps").hasChild(currentId))
                 {
-                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("name").getValue().toString());
+                    String profileImageUrl = "default";
+                    if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+                        profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                    }
+                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("name").getValue().toString(), profileImageUrl);
                     rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
                 }
