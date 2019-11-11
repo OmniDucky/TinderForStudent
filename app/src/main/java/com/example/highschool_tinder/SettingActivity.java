@@ -47,15 +47,13 @@ public class SettingActivity extends AppCompatActivity {
 
     private DatabaseReference mUserDatabase;
 
-    private String userId, name, phone, profileImageUrl;
+    private String userId, name, phone, profileImageUrl,userSex;
 
     private Uri resultUri;
-    String userSex;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        userSex = getIntent().getExtras().getString("userSex");
 
 
         mNameField = findViewById(R.id.name_field);
@@ -67,7 +65,7 @@ public class SettingActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userSex).child(userId);
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         getUserInfo();
         mProfileImage.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +106,10 @@ public class SettingActivity extends AppCompatActivity {
                     {
                         phone = map.get("phone").toString();
                         mPhoneField.setText(phone);
+                    }
+                    if (map.get("sex")!= null)
+                    {
+                        userSex = map.get("sex").toString();
                     }
                     if (map.get("profileImageUrl")!=null){
                         profileImageUrl = (String) map.get("profileImageUrl");

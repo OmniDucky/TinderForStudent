@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Button mSetting, mLogout;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
-    private DatabaseReference userDb;
+    private DatabaseReference usersDb;
     String currentId;
     ListView listView;
     List<cards> rowItems;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userDb = FirebaseDatabase.getInstance().getReference().child("Users");
+        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
         mLogout = findViewById(R.id.logout_but);
         checkUserSex();
         rowItems = new ArrayList<cards>();
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
                 rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
@@ -68,14 +67,14 @@ public class MainActivity extends AppCompatActivity {
             public void onLeftCardExit(Object dataObject) {
                 cards obj = (cards) dataObject;
                 String userId = obj.getUserId();
-                userDb.child(FriendSex).child(userId).child("connnections").child("nope").child(currentId).setValue(true);
+                usersDb.child(userId).child("connnections").child("nope").child(currentId).setValue(true);
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 cards obj = (cards) dataObject;
                 String FriendId = obj.getUserId();
-                userDb.child(FriendSex).child(FriendId).child("connnections").child("yeps").child(currentId).setValue(true);
+                usersDb.child(FriendId).child("connnections").child("yeps").child(currentId).setValue(true);
                 isConnectionMatch(FriendId);
             }
 
@@ -110,20 +109,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,SettingActivity.class);
-                intent.putExtra("userSex",userSex);
                 startActivity(intent);
             }
         });
     }
 
     private void isConnectionMatch(final String FriendId) {
-        DatabaseReference currentUserConnectionDb = userDb.child(userSex).child(currentId).child("connections").child("yeps").child(FriendId);
+        DatabaseReference currentUserConnectionDb = usersDb.child(currentId).child("connections").child("yeps").child(FriendId);
         currentUserConnectionDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Toast.makeText(MainActivity.this,"new connection",Toast.LENGTH_LONG).show();
-                userDb.child(FriendSex).child(dataSnapshot.getKey()).child("connections").child("matches").child(currentId).setValue(true);
-                userDb.child(userSex).child(currentId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+                usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(currentId).setValue(true);
+                usersDb.child(currentId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
             }
 
             @Override
@@ -139,39 +137,25 @@ public class MainActivity extends AppCompatActivity {
     private String userSex,FriendSex;
     public void checkUserSex(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference maleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
-        maleDb.addChildEventListener(new ChildEventListener() {
+        DatabaseReference userDb = usersDb.child(user.getUid());
+        userDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.getKey().equals(user.getUid())){
-                    userSex = "Male";
-                    FriendSex = "Female";
-                    getOppositeSexUser();
-                }
-            }
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-        DatabaseReference femaleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Female");
-        femaleDb.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot.getKey().equals(user.getUid())){
-                    userSex = "Female";
-                    FriendSex = "Male";
-                    getOppositeSexUser();
+                    if (dataSnapshot.exists())
+                        if (dataSnapshot.child("sex") != null){
+                            userSex = dataSnapshot.child("sex").getValue().toString();
+                            FriendSex = "Male";
+                            switch (userSex){
+                                case "Male":
+                                    FriendSex = "Female";
+                                    break;
+                                case "Female":
+                                    FriendSex = "Male";
+                                    break;
+                            }
+                            getOppositeSexUser();
+                        }
                 }
             }
             @Override
@@ -190,11 +174,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getOppositeSexUser(){
-        DatabaseReference oppositeSexDb = FirebaseDatabase.getInstance().getReference().child("Users").child(FriendSex);
-        oppositeSexDb.addChildEventListener(new ChildEventListener() {
+        usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded( DataSnapshot dataSnapshot,  String s) {
-                if (dataSnapshot.exists() && !dataSnapshot.child("connection").child("nope").hasChild(currentId) && !dataSnapshot.child("connection").child("yeps").hasChild(currentId))
+                if (dataSnapshot.exists() && !dataSnapshot.child("connection").child("nope").hasChild(currentId) && !dataSnapshot.child("connection").child("yeps").hasChild(currentId) && dataSnapshot.child("sex").getValue().toString().equals(FriendSex))
                 {
                     String profileImageUrl = "default";
                     if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
