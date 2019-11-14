@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.highschool_tinder.Cards.CustomArrayAdapter;
+import com.example.highschool_tinder.Cards.cards;
+import com.example.highschool_tinder.Matches.MatchesActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,12 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    String Something;
     private cards cards_data[];
     private CustomArrayAdapter arrayAdapter;
     private int i;
     private FirebaseAuth mAuth;
-    private Button mSetting, mLogout;
+    private Button mSetting, mLogout, mMatch;
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
     private DatabaseReference usersDb;
     String currentId;
@@ -110,6 +111,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,SettingActivity.class);
                 startActivity(intent);
+            }
+        });
+        mMatch = findViewById(R.id.Match_but);
+        mMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }

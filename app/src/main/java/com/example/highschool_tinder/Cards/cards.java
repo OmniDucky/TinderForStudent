@@ -1,4 +1,4 @@
-package com.example.highschool_tinder;
+package com.example.highschool_tinder.Cards;
 
 public class cards {
     private String userId;
